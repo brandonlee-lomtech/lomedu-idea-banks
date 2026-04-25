@@ -100,15 +100,8 @@
       font-size: 0.98rem;
     }
     tr:last-child td { border-bottom: none; }
-    .col-when { width: 11rem; }
-    .col-name { width: 9rem; }
-    .col-email { width: 14rem; }
-    .col-idea {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
     .col-when {
+      width: 11rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -116,8 +109,19 @@
       font-variant-numeric: tabular-nums;
       font-size: 0.95rem;
     }
-    .col-name,
+    .col-name {
+      width: 9rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     .col-email {
+      width: 14rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .col-idea {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -274,10 +278,10 @@
       <table>
         <thead>
           <tr>
-            <th>When</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Idea</th>
+            <th class="col-when">When</th>
+            <th class="col-name">Name</th>
+            <th class="col-email">Email</th>
+            <th class="col-idea">Idea</th>
             <th class="col-actions">Actions</th>
           </tr>
         </thead>
@@ -291,8 +295,8 @@
             aria-label="View idea from {{ row.name | e }}"
           >
             <td class="col-when">{{ row.submitted_at | e }}</td>
-            <td>{{ row.name | e }}</td>
-            <td>{{ row.email | e }}</td>
+            <td class="col-name">{{ row.name | e }}</td>
+            <td class="col-email">{{ row.email | e }}</td>
             <td class="col-idea">{{ row.idea | e }}</td>
             <td class="col-actions">
               <button type="button" class="btn-del" data-id="{{ row.id | e }}">Delete</button>
