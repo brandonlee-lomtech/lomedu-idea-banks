@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Share an idea</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7f9;
+      --card: #fff;
+      --text: #1a1d26;
+      --muted: #5c6370;
+      --border: #d8dce3;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --error: #b91c1c;
+      --ok: #15803d;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111318;
+        --card: #1a1d24;
+        --text: #e8eaef;
+        --muted: #9aa3b2;
+        --border: #2f3542;
+        --accent: #3b82f6;
+        --accent-hover: #60a5fa;
+        --error: #f87171;
+        --ok: #4ade80;
+      }
+    }
+    html { font-size: 112.5%; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      padding: 2rem 1.25rem;
+      font-size: 1.05rem;
+    }
+    main {
+      max-width: 38rem;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin: 0 0 0.35rem;
+      letter-spacing: -0.02em;
+    }
+    p.lead {
+      margin: 0 0 1.5rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+    form {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.4rem 1.35rem 1.15rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+    label {
+      display: block;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+    }
+    .field { margin-bottom: 1rem; }
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      font: inherit;
+      font-size: 1.05rem;
+      padding: 0.7rem 0.8rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+    }
+    input:focus,
+    textarea:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+    textarea {
+      resize: none;
+      min-height: 7.5rem;
+      overflow-y: hidden;
+    }
+    button[type="submit"] {
+      font: inherit;
+      font-size: 1.05rem;
+      font-weight: 600;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      margin-top: 0.25rem;
+    }
+    button[type="submit"]:hover { background: var(--accent-hover); }
+    button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    #message {
+      margin-top: 1rem;
+      font-size: 1rem;
+      min-height: 1.35rem;
+    }
+    #message.error { color: var(--error); }
+    #message.ok { color: var(--ok); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Share an idea</h1>
+    <p class="lead">Tell us your name, email, and what you would like to share. <a href="/submissions">View submissions</a></p>
+    <form id="idea-form" novalidate>
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="idea">Idea to share</label>
+        <textarea id="idea" name="idea" rows="4" required></textarea>
+      </div>
+      <button type="submit" id="submit">Submit idea</button>
+    </form>
+    <p id="message" role="status" aria-live="polite"></p>
+  </main>
+  <script>
+    (function () {
+      var form = document.getElementById("idea-form");
+      var idea = document.getElementById("idea");
+      var msg = document.getElementById("message");
+      var submitBtn = document.getElementById("submit");
+
+      function resizeTextarea() {
+        idea.style.height = "auto";
+        idea.style.height = idea.scrollHeight + "px";
+      }
+
+      idea.addEventListener("input", resizeTextarea);
+      window.addEventListener("load", resizeTextarea);
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        msg.textContent = "";
+        msg.className = "";
+        var name = document.getElementById("name").value.trim();
+        var email = document.getElementById("email").value.trim();
+        var ideaText = idea.value.trim();
+        if (!name || !email || !ideaText) {
+          msg.textContent = "Please fill in all fields.";
+          msg.className = "error";
+          return;
+        }
+        submitBtn.disabled = true;
+        fetch("/api/ideas", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: name, email: email, idea: ideaText }),
+        })
+          .then(function (res) {
+            return res.json().then(function (body) {
+              return { res: res, body: body };
+            });
+          })
+          .then(function (_ref) {
+            var res = _ref.res;
+            var body = _ref.body;
+            if (res.ok && body.ok) {
+              msg.textContent = "Thanks — your idea was saved.";
+              msg.className = "ok";
+              form.reset();
+              resizeTextarea();
+            } else {
+              msg.textContent = (body && body.error) || "Something went wrong.";
+              msg.className = "error";
+            }
+          })
+          .catch(function () {
+            msg.textContent = "Network error. Try again.";
+            msg.className = "error";
+          })
+          .finally(function () {
+            submitBtn.disabled = false;
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
