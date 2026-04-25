@@ -255,6 +255,27 @@
       align-items: center;
       justify-content: center;
     }
+    .present-copy-top {
+      position: absolute;
+      top: 0.65rem;
+      right: 3.75rem;
+      font: inherit;
+      font-size: 0.86rem;
+      padding: 0.48rem 0.7rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .present-copy-top:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .present-copy-top:disabled {
+      opacity: 0.65;
+      cursor: default;
+    }
     .present-close:hover {
       background: var(--bg);
       color: var(--text);
@@ -397,6 +418,7 @@
   >
     <div class="present-panel" id="present-panel">
       <button type="button" class="present-close" id="present-close" aria-label="Close presentation">×</button>
+      <button type="button" class="present-copy-top" id="present-copy-top">Copy</button>
       <div class="present-accent" aria-hidden="true"></div>
       <p class="present-byline" id="present-byline"></p>
       <p class="present-when" id="present-when"></p>
@@ -421,6 +443,7 @@
       var presentWhen = document.getElementById("present-when");
       var presentIdea = document.getElementById("present-idea");
       var presentCopy = document.getElementById("present-copy");
+      var presentCopyTop = document.getElementById("present-copy-top");
       var presentCopyStatus = document.getElementById("present-copy-status");
 
       var ideasById = {};
@@ -495,6 +518,7 @@
           return;
         }
         if (presentCopy) presentCopy.disabled = true;
+        if (presentCopyTop) presentCopyTop.disabled = true;
         navigator.clipboard.writeText(text)
           .then(function () {
             setCopyStatus("Copied.");
@@ -504,6 +528,7 @@
           })
           .finally(function () {
             if (presentCopy) presentCopy.disabled = false;
+            if (presentCopyTop) presentCopyTop.disabled = false;
           });
       }
 
@@ -525,6 +550,11 @@
         });
         if (presentCopy) {
           presentCopy.addEventListener("click", function () {
+            copyPresentationText();
+          });
+        }
+        if (presentCopyTop) {
+          presentCopyTop.addEventListener("click", function () {
             copyPresentationText();
           });
         }
