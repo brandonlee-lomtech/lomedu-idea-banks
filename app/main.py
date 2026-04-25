@@ -16,11 +16,20 @@ _LOCK_PATH = _DATA_DIR / ".ideas.lock"
 
 _EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 
+_DEFAULT_SITE_URL = "https://idea-banks.lomedu.net"
+
 app = Flask(
     __name__,
     template_folder=str(_ROOT / "templates"),
     static_folder=None,
 )
+
+
+@app.context_processor
+def inject_site_url() -> dict:
+    raw = os.environ.get("SITE_URL", _DEFAULT_SITE_URL).strip()
+    url = raw.rstrip("/") if raw else ""
+    return {"site_url": url}
 
 
 def _ensure_data_dir() -> None:

@@ -42,6 +42,43 @@
     }
     body.present-open { overflow: hidden; }
     main { max-width: 58rem; margin: 0 auto; }
+    .site-hero {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      padding: 1.1rem 1rem 1.2rem;
+      background: linear-gradient(
+        155deg,
+        rgba(37, 99, 235, 0.12),
+        rgba(168, 85, 247, 0.08) 55%,
+        rgba(37, 99, 235, 0.05)
+      );
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 2px 14px rgba(37, 99, 235, 0.07);
+    }
+    .site-hero-kicker {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      margin: 0 0 0.45rem;
+    }
+    .site-hero-url {
+      font-size: clamp(1.05rem, 3.8vw, 1.85rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.2;
+      margin: 0;
+      word-break: break-word;
+    }
+    .site-hero-url a {
+      color: var(--text);
+      text-decoration: none;
+    }
+    .site-hero-url a:hover {
+      color: var(--accent);
+    }
     h1 {
       font-size: 2rem;
       font-weight: 600;
@@ -265,6 +302,14 @@
 </head>
 <body>
   <main>
+    {% if site_url %}
+    <header class="site-hero" aria-label="Site address">
+      <p class="site-hero-kicker">Idea Bank</p>
+      <p class="site-hero-url">
+        <a href="{{ site_url }}/">{{ site_url }}/</a>
+      </p>
+    </header>
+    {% endif %}
     <h1>Submitted ideas</h1>
     <p class="lead"><a href="/">Submit an idea</a> · Newest first. Click a row to view an idea in presentation mode. You can delete a row here, then submit again from the home page.</p>
     {% if load_error %}

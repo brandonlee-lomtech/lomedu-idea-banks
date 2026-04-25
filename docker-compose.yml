@@ -1,6 +1,8 @@
 services:
   web:
     build: .
+    environment:
+      SITE_URL: https://idea-banks.lomedu.net
     ports:
       - "8001:8000"
     volumes:
